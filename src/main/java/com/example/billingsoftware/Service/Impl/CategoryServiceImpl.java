@@ -8,7 +8,9 @@ import com.example.billingsoftware.io.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,6 +25,17 @@ public class CategoryServiceImpl implements CategoryService {
         newCategory=categoryRepository.save(newCategory);
         return convertToResponse(newCategory);
 
+    }
+
+    @Override
+    public List<CategoryResponse> read() {
+        return categoryRepository.findAll().stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public void DeleteCategory(String id) {
+        CategoryEntity existingEntity=categoryRepository.findByCategoryId(id).orElseThrow(()->new RuntimeException("Category not found" +id));
+        categoryRepository.delete(existingEntity);
     }
 
     private CategoryResponse convertToResponse(CategoryEntity newCategory) {
