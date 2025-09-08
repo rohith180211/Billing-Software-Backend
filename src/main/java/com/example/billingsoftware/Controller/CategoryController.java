@@ -28,6 +28,8 @@ public class CategoryController {
     public List<CategoryResponse> fetchAllCategories() {
         return categoryService.read();
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
     public void remove(@PathVariable String id) {
         try {
