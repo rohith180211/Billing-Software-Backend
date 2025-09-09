@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -45,6 +46,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public boolean deleteFile(String imgUrl) {
-        return false;
+        String fileName=imgUrl.substring(imgUrl.lastIndexOf("/")+1);
+        DeleteObjectRequest.builder().bucket(bucketName).key(fileName).build();
+        s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(fileName).build());
+        return true;
     }
 }

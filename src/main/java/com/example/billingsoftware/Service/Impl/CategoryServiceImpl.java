@@ -3,10 +3,12 @@ package com.example.billingsoftware.Service.Impl;
 import com.example.billingsoftware.Entity.CategoryEntity;
 import com.example.billingsoftware.Repository.CategoryRepository;
 import com.example.billingsoftware.Service.CategoryService;
+import com.example.billingsoftware.Service.FileUploadService;
 import com.example.billingsoftware.io.CategoryRequest;
 import com.example.billingsoftware.io.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +20,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final FileUploadService fileUploadService;
 
     @Override
-    public CategoryResponse addCategory(CategoryRequest categoryRequest) {
+    public CategoryResponse addCategory(CategoryRequest categoryRequest, MultipartFile multipartFile) {
+        String imgUrl=fileUploadService.uploadFile(multipartFile);
         CategoryEntity newCategory = convertToEntity(categoryRequest);
+        newCategory.setImgUrl(imgUrl);
         newCategory=categoryRepository.save(newCategory);
         return convertToResponse(newCategory);
 
@@ -35,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void DeleteCategory(String id) {
         CategoryEntity existingEntity=categoryRepository.findByCategoryId(id).orElseThrow(()->new RuntimeException("Category not found" +id));
+        fileUploadService.deleteFile(existingEntity.getImgUrl());
         categoryRepository.delete(existingEntity);
     }
 
