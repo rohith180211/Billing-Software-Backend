@@ -17,7 +17,7 @@ import java.util.Collections;
 public class AppUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public static UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity existingUser=userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
         return new User(existingUser.getEmail(), existingUser.getPassword(), Collections.singleton(new SimpleGrantedAuthority((existingUser.getRole()))));
     }
